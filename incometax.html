@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCBP Income Tax Calculator</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+margin: 50px;
+}
+
+
+input {
+padding: 5px;
+margin-bottom: 10px;
+}
+
+
+button {
+padding: 10px;
+background-color: #4a4949;
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+
+button:hover {
+background-color: #242424;
+}
+
+
+.top-bar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: #333;
+color: white;
+padding: 10px;
+}
+
+
+.title {
+font-size: 24px;
+margin: 0;
+}
+</style>
+</head>
+<body>
+
+
+<!-- Top Bar with Title and Button -->
+<div class="top-bar">
+<button onclick="handleButtonClick()">Back</button>
+<h2 class="title">DCBP</h2>
+</div>
+
+
+<!-- Income Tax Calculator Section -->
+<h3>Income Tax Calculator</h3>
+<label for="income">Enter Taxable Income:</label>
+<input type="text" id="income" pattern="[0-9,]*" placeholder="Enter Amount">
+<button onclick="calculateTax()">Calculate Tax</button>
+<p id="result"></p>
+
+
+<script>
+function handleButtonClick() {
+window.location.href = 'index.html';
+}
+
+
+function calculateTax() {
+var incomeStr = document.getElementById('income').value;
+
+
+if (containsLetters(incomeStr)) {
+displayErrorMessage();
+return;
+}
+
+
+var income = parseFloat(incomeStr.replace(/,/g, ''));
+
+
+if (isNaN(income)) {
+displayErrorMessage();
+return;
+}
+
+
+var tax = 0;
+
+
+if (income <= 250000) {
+tax = 0;
+} else if (income <= 400000) {
+tax = 0.2 * (income - 250000);
+} else if (income <= 800000) {
+tax = 30000 + 0.25 * (income - 400000);
+} else if (income <= 2000000) {
+tax = 130000 + 0.3 * (income - 800000);
+} else if (income <= 8000000) {
+tax = 490000 + 0.32 * (income - 2000000);
+} else {
+tax = 2410000 + 0.35 * (income - 8000000);
+}
+
+
+var formattedTax = tax.toLocaleString('en-US', { style: 'currency', currency: 'PHP' });
+
+
+var resultElement = document.getElementById('result');
+resultElement.innerHTML = 'Income Tax: ' + formattedTax;
+}
+
+
+function containsLetters(value) {
+return /[a-zA-Z]/.test(value);
+}
+
+
+function displayErrorMessage() {
+var resultElement = document.getElementById('result');
+resultElement.innerHTML = 'Try again, Type Numbers only';
+}
+</script>
+
+
+</body>
+</html>
