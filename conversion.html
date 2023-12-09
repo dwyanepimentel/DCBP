@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCBP Conversion Calculator</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: left;
+margin: 50px;
+}
+
+
+input {
+padding: 5px;
+margin-bottom: 10px;
+}
+
+
+button {
+padding: 10px;
+background-color: #4a4949;
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+
+button:hover {
+background-color: #242424;
+}
+
+
+.top-bar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: #333;
+color: white;
+padding: 10px;
+}
+
+
+.title {
+font-size: 24px;
+margin: 0;
+}
+
+
+.conversion-container {
+margin-top: 20px;
+}
+
+
+.result {
+font-weight: bold;
+margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+
+<!-- Top Bar with Title and Button -->
+<div class="top-bar">
+<button onclick="handleButtonClick()">Back</button>
+<h2 class="title">DCBP</h2>
+</div>
+
+
+<!-- Conversion Section -->
+<div class="conversion-container">
+<h3>Simple Computations</h3>
+<h4> Conversion Calculator</h4>
+
+
+<label>Select conversion type:</label>
+<select id="conversionType" onchange="updateOptions()">
+<option value="0">Select Type</option>
+<option value="1">Temperature</option>
+<option value="2">Length</option>
+</select>
+
+
+<div id="temperatureOptions" style="display: none; margin-top: 10px;">
+<label>Select temperature conversion:</label>
+<select id="temperatureConversion">
+<option value="0">Select Option</option>
+<option value="1">Fahrenheit to Celsius</option>
+<option value="2">Celsius to Fahrenheit</option>
+</select>
+<br> <br> <br>
+<label for="temperatureInput">Enter temperature:</label>
+<input type="number" id="temperatureInput" placeholder="Temperature">
+<br>
+<button onclick="performConversion()">Convert</button>
+</div>
+
+
+<div id="lengthOptions" style="display: none; margin-top: 10px;">
+<label>Select length conversion:</label>
+<select id="lengthConversion">
+<option value="0">Select Option</option>
+<option value="3">Meters to Feet</option>
+<option value="4">Feet to Meters</option>
+</select>
+<br>
+<label for="lengthInput">Enter length:</label>
+<input type="number" id="lengthInput" placeholder="Length">
+<br>
+<button onclick="performConversion()">Convert</button>
+</div>
+
+
+<div id="resultContainer" class="result"></div>
+</div>
+
+
+<script>
+function handleButtonClick() {
+  window.location.href = 'index.html';
+}
+
+ function convertTemperature(temperature, conversionType) {
+  if (conversionType === "1") {
+    return `${temperature} Fahrenheit is ${(temperature - 32) * 5/9} Celsius`;
+  } else if (conversionType === "2") {
+    return `${temperature} Celsius is ${((temperature * 9/5) + 32).toFixed(2)} Fahrenheit`;
+  }
+}
+
+function convertLength(length, conversionType) {
+        if (conversionType === "3") {
+          return `${length} Meters is ${(length * 3.28084).toFixed(2)} Feet`;
+        } else if (conversionType === "4") {
+          return `${length} Feet is ${(length / 3.28084).toFixed(2)} Meters`;
+        }
+      }
+
+function updateOptions() {
+  let conversionType = document.getElementById('conversionType').value;
+  let temperatureOptions = document.getElementById('temperatureOptions');
+  let lengthOptions = document.getElementById('lengthOptions');
+  let resultContainer = document.getElementById('resultContainer');
+
+  resultContainer.textContent = "";
+
+  if (conversionType === "1") {
+    temperatureOptions.style.display = 'block';
+    lengthOptions.style.display = 'none';
+  } else if (conversionType === "2") {
+    temperatureOptions.style.display = 'none';
+    lengthOptions.style.display = 'block';
+  } else {
+    temperatureOptions.style.display = 'none';
+    lengthOptions.style.display = 'none';
+  }
+}
+
+function performConversion() {
+  let conversionType = document.getElementById('conversionType').value;
+  let resultContainer = document.getElementById('resultContainer');
+  let result;
+
+  if (conversionType === "1") {
+    let temperatureInput = document.getElementById('temperatureInput');
+    let temperature = parseFloat(temperatureInput.value);
+
+    if (!isNaN(temperature)) {
+      let temperatureConversion = document.getElementById('temperatureConversion').value;
+      result = convertTemperature(temperature, temperatureConversion);
+    } else {
+      result = "Invalid temperature input. Please enter a valid number.";
+    }
+  } else if (conversionType === "2") {
+    let lengthInput = document.getElementById('lengthInput');
+    let length = parseFloat(lengthInput.value);
+
+    if (!isNaN(length)) {
+      let lengthConversion = document.getElementById('lengthConversion').value;
+      result = convertLength(length, lengthConversion);
+    } else {
+      result = "Invalid length input. Please enter a valid number.";
+    }
+  } else {
+    result = "Invalid choice. Please select a valid conversion type.";
+  }
+
+  resultContainer.textContent = result;
+}
+</script>
+
+</body>
+</html>
