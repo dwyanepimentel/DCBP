@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DCBP Payroll Management System</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+text-align: left;
+margin: 50px 20px; /* Adjusted margin for better spacing */
+}
+
+
+input {
+padding: 5px;
+margin-bottom: 10px;
+}
+
+
+button {
+padding: 10px;
+background-color: #4a4949;
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+
+button:hover {
+background-color: #242424;
+}
+
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+}
+
+
+table, th, td {
+border: 1px solid #ddd;
+}
+
+
+th, td {
+padding: 8px;
+text-align: left;
+}
+
+
+.top-bar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background-color: #333;
+color: white;
+padding: 10px;
+}
+
+
+.title {
+font-size: 24px;
+margin: 0;
+}
+
+.modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+    
+    
+
+</style>
+</head>
+<body>
+
+
+<!-- Top Bar with Title and Button -->
+<div class="top-bar">
+<button onclick="handleButtonClick()">Back</button>
+<h2 class="title">DCBP</h2>
+</div>
+
+
+<!-- Payroll Management System Section -->
+<h3>Payroll Management System</h3>
+
+
+<label for="employeeName">Employee Name:</label>
+<input type="text" id="employeeName" placeholder="Employee Name">
+<br>
+
+
+<label for="daysWorked">Days Worked:</label>
+<input type="number" id="daysWorked" placeholder="Days Worked">
+<br>
+
+
+<label for="dailyRate">Daily Rate:</label>
+<input type="number" id="dailyRate" placeholder="Daily Rate">
+<br>
+
+
+<label for="deductionAmount">Deduction Amount:</label>
+<input type="number" id="deductionAmount" placeholder="Deduction Amount">
+<br>
+
+
+<button onclick="addEmployee()">Add Employee</button>
+<button onclick="deleteEmployee()">Delete Employee</button>
+<button onclick="deleteAllEmployees()">Delete All Employees</button>
+
+
+<table id="payrollTable">
+<tr>
+<th>No.</th>
+<th>Employee Name</th>
+<th>Days Worked</th>
+<th>Daily Rate</th>
+<th>Gross Pay</th>
+<th>Deduction Amount</th>
+<th>Net Pay</th>
+</tr>
+</table>
+
+<div id="deleteAllModal" class="modal">
+  <p>Are you sure you want to delete all employees?</p>
+  <button onclick="deleteAllEmployees()">Delete All</button>
+  <button onclick="closeDeleteAllModal()">Cancel</button>
+</div>
+
+<div id="deleteModal" class="modal">
+  <p>Enter the Line Number to delete:</p>
+  <input type="number" id="lineNumberInput">
+  <button onclick="deleteEmployeeFromModal()">Delete</button>
+  <button onclick="closeModal()">Cancel</button>
+</div>
+
+<script>
+
+// Functions
+let payrollList = [];
+
+
+function handleButtonClick() {
+window.location.href = 'index.html';
+}
+
+
+function addEmployee() {
+let employeeName = document.getElementById('employeeName').value;
+let daysWorked = parseInt(document.getElementById('daysWorked').value);
+let dailyRate = parseFloat(document.getElementById('dailyRate').value);
+let deductionAmount = parseFloat(document.getElementById('deductionAmount').value);
+
+
+if (isNaN(daysWorked) || isNaN(dailyRate) || isNaN(deductionAmount)) {
+alert("Please enter valid numeric values for Days Worked, Daily Rate, and Deduction Amount.");
+return;
+}
+
+
+let grossPay = daysWorked * dailyRate;
+let netPay = grossPay - deductionAmount;
+
+
+payrollList.push({
+employeeName,
+daysWorked,
+dailyRate,
+grossPay,
+deductionAmount,
+netPay
+});
+
+
+updateTable();
+clearInputs();
+}
+
+
+function deleteEmployee() {
+    // Open the modal for input
+    document.getElementById('deleteModal').style.display = 'block';
+  }
+
+  function deleteEmployeeFromModal() {
+    let lineNumber = document.getElementById('lineNumberInput').value;
+
+    if (lineNumber === null || lineNumber === "") {
+      closeModal();
+      return; // User clicked cancel or did not enter a value
+    }
+
+    lineNumber = parseInt(lineNumber);
+
+    if (isNaN(lineNumber) || lineNumber < 1 || lineNumber > payrollList.length) {
+      alert("Invalid Line Number. Please enter a valid number.");
+      return;
+    }
+
+    payrollList.splice(lineNumber - 1, 1); // Adjust for 0-based index
+    updateTable();
+    closeModal();
+  }
+
+  function closeModal() {
+    // Close the modal
+    document.getElementById('deleteModal').style.display = 'none';
+    document.getElementById('lineNumberInput').value = ''; // Clear input value
+  }
+
+   function openDeleteAllModal() {
+    // Open the modal for confirmation
+    document.getElementById('deleteAllModal').style.display = 'block';
+  }
+
+  function deleteAllEmployees() {
+    // Clear the payrollList and update the table
+    payrollList = [];
+    updateTable();
+    closeDeleteAllModal();
+  }
+
+  function closeDeleteAllModal() {
+    // Close the modal for confirmation
+    document.getElementById('deleteAllModal').style.display = 'none';
+  }
+
+
+function updateTable() {
+let table = document.getElementById('payrollTable');
+clearTable();
+
+
+for (let i = 0; i < payrollList.length; i++) {
+let row = table.insertRow(-1);
+let cellNumber = row.insertCell(0);
+let cellEmployeeName = row.insertCell(1);
+let cellDaysWorked = row.insertCell(2);
+let cellDailyRate = row.insertCell(3);
+let cellGrossPay = row.insertCell(4);
+let cellDeductionAmount = row.insertCell(5);
+let cellNetPay = row.insertCell(6);
+
+
+cellNumber.textContent = i + 1;
+cellEmployeeName.textContent = payrollList[i].employeeName;
+cellDaysWorked.textContent = payrollList[i].daysWorked;
+cellDailyRate.textContent = payrollList[i].dailyRate;
+cellGrossPay.textContent = payrollList[i].grossPay.toFixed(2);
+cellDeductionAmount.textContent = payrollList[i].deductionAmount.toFixed(2);
+cellNetPay.textContent = payrollList[i].netPay.toFixed(2);
+}
+}
+
+
+function clearTable() {
+let table = document.getElementById('payrollTable');
+while (table.rows.length > 1) {
+table.deleteRow(1);
+}
+}
+
+
+function clearInputs() {
+document.getElementById('employeeName').value = '';
+document.getElementById('daysWorked').value = '';
+document.getElementById('dailyRate').value = '';
+document.getElementById('deductionAmount').value = '';
+}
+</script>
+
+
+</body>
+</html>
